@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.example.avaliacao.modules.log;
+package com.example.avaliacao.modules.log.model;
 
 import java.util.Date;
 import javax.persistence.Entity;
@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name = "LOG")
 @SequenceGenerator(name = "seq_log", sequenceName = "seq_log", initialValue = 1, allocationSize = 1)
 public class Log {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -35,6 +35,9 @@ public class Log {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    protected Log() {
     }
 
     public Log(String operacao, Date dataAtual, String descricao) {
@@ -66,7 +69,5 @@ public class Log {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-    
-    
-    
+
 }
