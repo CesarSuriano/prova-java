@@ -78,7 +78,7 @@ public class ProjectController {
 
 
     @GetMapping(value = "/projects/{id}")
-    public ResponseEntity<Project> getTodoById(@PathVariable("id") Long id) {
+    public ResponseEntity<Project> getProjectById(@PathVariable("id") Long id) {
 
         try {
         	ResponseEntity<Project> operacao = service.getById(id);
@@ -91,7 +91,7 @@ public class ProjectController {
     }
 
     @PutMapping(value = "/projects/{id}")
-    public ResponseEntity<Project> updateTodo(@PathVariable("id") Long id,
+    public ResponseEntity<Project> updateProject(@PathVariable("id") Long id,
             @RequestBody Project project) {
         try {
         	 ResponseEntity<Project> operacao = service.update(id, project); 
@@ -107,7 +107,7 @@ public class ProjectController {
     }
 
     @DeleteMapping(value = "/projects/{id}")
-    public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteProject(@PathVariable("id") Long id) {
         
         try {
         	 ResponseEntity<?> operacao = service.delete(id);

@@ -71,7 +71,7 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/employees/{id}")
-    public ResponseEntity<Employee> getTodoById(@PathVariable("id") Long id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
 
         try {
         	ResponseEntity<Employee> operacao =service.getById(id); 
@@ -85,7 +85,7 @@ public class EmployeeController {
     }
 
     @PutMapping(value = "/employees/{id}")
-    public ResponseEntity<Employee> updateTodo(@PathVariable("id") Long id,
+    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id,
             @RequestBody Employee employee) {
         
         try {
@@ -100,7 +100,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping(value = "/employees/{id}")
-    public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteEmployee(@PathVariable("id") Long id) {
     	
     	try {
     		ResponseEntity<?> operacao = service.delete(id); 
