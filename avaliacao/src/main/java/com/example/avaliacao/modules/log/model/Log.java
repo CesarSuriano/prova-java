@@ -6,6 +6,8 @@
 package com.example.avaliacao.modules.log.model;
 
 import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +29,8 @@ public class Log {
     private Long id;
     private String operacao;
     private Date dataAtual;
+    
+    @Column(length = 1000)
     private String descricao;
 
     public Long getId() {

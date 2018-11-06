@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
  * @author Cesar
  */
 @Repository
-public interface ProjectRepository  extends JpaRepository<Project, Long>{
-    
+public interface ProjectRepository extends JpaRepository<Project, Long> {
+
+
 }

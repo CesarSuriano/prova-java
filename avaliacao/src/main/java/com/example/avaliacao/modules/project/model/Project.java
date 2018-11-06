@@ -1,5 +1,6 @@
 package com.example.avaliacao.modules.project.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -31,8 +32,10 @@ public class Project implements Serializable {
 	@Size(min = 2, max = 300)
 	private String name;
 
-	@ManyToMany(mappedBy = "projects")
-	private Set<Employee> employees;
+	@ManyToMany
+	@JoinTable(name = "EMP_PROJECT", joinColumns = { @JoinColumn(name = "project_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "employee_id") })
+	private Set<Employee> employees = new HashSet<>();
 
 	public Project() {
 	}
@@ -56,6 +59,12 @@ public class Project implements Serializable {
 		this.employees = employees;
 	}
 
+	public void addEmployee(Employee employee) {
+		if (employee != null) {
+			this.employees.add(employee);
+		}
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -67,8 +76,6 @@ public class Project implements Serializable {
 	public String getName() {
 		return name;
 	}
-	
-	
 
 	@Override
 	public String toString() {
@@ -103,7 +110,5 @@ public class Project implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
 
 }

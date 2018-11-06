@@ -1,6 +1,7 @@
 package com.example.avaliacao.modules.employee.model;
 
 import com.example.avaliacao.modules.project.model.Project;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -33,8 +34,8 @@ public class Employee implements Serializable {
 
 	private double salary;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "EMP_PROJ", joinColumns = @JoinColumn(name = "empteste_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "proj_id", referencedColumnName = "id"))
+	@ManyToMany(mappedBy = "employees")
+	@JsonBackReference
 	private Set<Project> projects;
 
 	public Employee() {

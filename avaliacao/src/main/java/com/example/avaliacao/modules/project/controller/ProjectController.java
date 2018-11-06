@@ -11,6 +11,8 @@ import com.example.avaliacao.modules.log.repository.LogRepository;
 import com.example.avaliacao.modules.project.model.Project;
 import com.example.avaliacao.modules.project.model.Project;
 import com.example.avaliacao.modules.project.repository.ProjectRepository;
+import com.example.avaliacao.modules.project.service.ProjectService;
+
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -44,33 +46,28 @@ public class ProjectController {
 
     @Autowired
     LogController log;
-
+    
     @Autowired
-    ProjectRepository projectRepository;
+    ProjectService service;
 
     @GetMapping("/projects")
-    //@Transactional()
     public List<Project> getAllProjects() {
-        Sort sortByCreatedAtDesc = new Sort(Sort.Direction.DESC, "id");
-
         try {
-            List<Project> operacao = projectRepository.findAll(sortByCreatedAtDesc);
+            List<Project> operacao = service.findAll();
             log.createLog(new Log("Busca de projetos", new Date(), "Busca realizada"));
             return  operacao;
         } catch (Exception e) {
             log.createLog(new Log("Erro na busca de projetos", new Date(), e.getMessage()));
             throw e;
         }
-
     }
 
     
     @PostMapping("/projects")
-   // @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Project createProject(Project project) {
+    public Project createProject(@RequestBody Project project) {
         try {
-        	Project operacao = projectRepository.save(project);
-            log.createLog(new Log("Inserção de projetos", new Date(), "Inserção realizada"));
+        	Project operacao = service.save(project);
+        	log.createLog(new Log("Inserção de projetos", new Date(), "Inserção realizada"));
             return operacao;
         } catch (Exception e) {
             log.createLog(new Log("Erro ao inserir projeto", new Date(), e.getMessage()));
@@ -79,14 +76,12 @@ public class ProjectController {
 
     }
 
-    //@Transactional
+
     @GetMapping(value = "/projects/{id}")
     public ResponseEntity<Project> getTodoById(@PathVariable("id") Long id) {
 
         try {
-        	 ResponseEntity<Project> operacao = projectRepository.findById(id)
-                    .map(project -> ResponseEntity.ok().body(project))
-                    .orElse(ResponseEntity.notFound().build());
+        	ResponseEntity<Project> operacao = service.getById(id);
             log.createLog(new Log("Buscando pelo projeto " + id, new Date(), "Busca realizada com sucesso"));
             return operacao;
         } catch (Exception e) {
@@ -95,17 +90,11 @@ public class ProjectController {
         }
     }
 
-    //@Transactional
     @PutMapping(value = "/projects/{id}")
     public ResponseEntity<Project> updateTodo(@PathVariable("id") Long id,
-            Project project) {
+            @RequestBody Project project) {
         try {
-        	 ResponseEntity<Project> operacao = projectRepository.findById(id)
-                .map(projectData -> {
-                    projectData.setName(project.getName());
-                    Project updatedProject = projectRepository.save(projectData);
-                    return  ResponseEntity.ok().body(updatedProject);
-                }).orElse(ResponseEntity.notFound().build());
+        	 ResponseEntity<Project> operacao = service.update(id, project); 
              log.createLog(new Log("Atualizando projeto " + id, new Date(), "Atualização realizada com sucesso"));
              return operacao;
             
@@ -117,17 +106,11 @@ public class ProjectController {
         
     }
 
-    //@Transactional
     @DeleteMapping(value = "/projects/{id}")
     public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
         
         try {
-        	 ResponseEntity<?> operacao = projectRepository.findById(id)
-                .map(project -> {
-                    projectRepository.deleteById(id);
-                   return ResponseEntity.ok().build();
-                    
-                }).orElse(ResponseEntity.notFound().build());
+        	 ResponseEntity<?> operacao = service.delete(id);
             log.createLog(new Log("Deletando projeto " + id, new Date(), "Projeto deletado com sucesso"));
             return  operacao;
             

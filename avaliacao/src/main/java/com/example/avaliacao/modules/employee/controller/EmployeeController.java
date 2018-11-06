@@ -7,6 +7,7 @@ package com.example.avaliacao.modules.employee.controller;
 
 import com.example.avaliacao.modules.employee.model.Employee;
 import com.example.avaliacao.modules.employee.repository.EmployeeRepository;
+import com.example.avaliacao.modules.employee.service.EmployeeService;
 import com.example.avaliacao.modules.log.controller.LogController;
 import com.example.avaliacao.modules.log.model.Log;
 import com.example.avaliacao.modules.log.repository.LogRepository;
@@ -37,22 +38,16 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin("*")
 public class EmployeeController {
     
-//    EntityManager entityManager = new EntityManager();
-//    EmployeeTransaction etx = 
-
-    
     @Autowired
     LogController log;
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    EmployeeService service;
 
-   // @Transactional
     @GetMapping("/employees")
     public List<Employee> getAllEmployees() {
         try {
-            Sort sortByCreatedAtDesc = new Sort(Sort.Direction.DESC, "id");
-            List<Employee> operacao = employeeRepository.findAll(sortByCreatedAtDesc);
+            List<Employee> operacao = service.findAll();
             log.createLog(new Log("Busca de funcionários", new Date(), "Busca realizada"));
             return operacao;
         } catch (Exception e) {
@@ -63,11 +58,9 @@ public class EmployeeController {
     }
 
     @PostMapping("/employees")
-   // @Transactional
-    //@Valid, @RequestBody
-    public Employee createEmployee(Employee employee) {
+    public Employee createEmployee(@RequestBody Employee employee) {
         try {
-            Employee operacao = employeeRepository.save(employee);
+            Employee operacao = service.save(employee);
             log.createLog(new Log("Inserção de funcionários", new Date(), "Inserção realizada com sucesso"));
             return operacao;
         } catch (Exception e) {
@@ -77,14 +70,11 @@ public class EmployeeController {
 
     }
 
-    //@Transactional
     @GetMapping(value = "/employees/{id}")
     public ResponseEntity<Employee> getTodoById(@PathVariable("id") Long id) {
 
         try {
-        	ResponseEntity<Employee> operacao = employeeRepository.findById(id)
-                    .map(employee -> ResponseEntity.ok().body(employee))
-                    .orElse(ResponseEntity.notFound().build());
+        	ResponseEntity<Employee> operacao =service.getById(id); 
             log.createLog(new Log("Busca do funcionario " + id, new Date(), "Busca realizada"));
             return operacao;
         } catch (Exception e) {
@@ -95,18 +85,11 @@ public class EmployeeController {
     }
 
     @PutMapping(value = "/employees/{id}")
-    //@Transactional
     public ResponseEntity<Employee> updateTodo(@PathVariable("id") Long id,
-            Employee employee) {
+            @RequestBody Employee employee) {
         
         try {
-        	ResponseEntity<Employee> operacao = employeeRepository.findById(id)
-                .map(employeeData -> {
-                    employeeData.setName(employee.getName());
-                    employeeData.setSalary(employee.getSalary());
-                    Employee updatedEmployee = employeeRepository.save(employeeData);
-                   return ResponseEntity.ok().body(updatedEmployee);
-                }).orElse(ResponseEntity.notFound().build());
+        	ResponseEntity<Employee> operacao = service.update(id, employee); 
         	log.createLog(new Log("Atualização do funcionario " + id, new Date(), "Atualização realizada"));
              
             return operacao;
@@ -120,12 +103,8 @@ public class EmployeeController {
     public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
     	
     	try {
-    		ResponseEntity<?> operacao = employeeRepository.findById(id)
-                    .map(employee -> {
-                        employeeRepository.deleteById(id);
-                        return ResponseEntity.ok().build();
-                    }).orElse(ResponseEntity.notFound().build());
-    		
+    		ResponseEntity<?> operacao = service.delete(id); 
+    		log.createLog(new Log("funcionario " + id + " deletado", new Date(), "Operação realizada"));
     		return operacao;
 			
 		} catch (Exception e) {
