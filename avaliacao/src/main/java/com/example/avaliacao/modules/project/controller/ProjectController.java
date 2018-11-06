@@ -42,8 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin("*")
 public class ProjectController {    
 
-    Object operacao;
-    
     @Autowired
     LogController log;
 
@@ -51,29 +49,25 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     @GetMapping("/projects")
-    @Transactional(propagation = Propagation.REQUIRED, 
-                   isolation = Isolation.DEFAULT, 
-                   readOnly = false)
+    //@Transactional()
     public List<Project> getAllProjects() {
         Sort sortByCreatedAtDesc = new Sort(Sort.Direction.DESC, "id");
 
         try {
-            operacao = projectRepository.findAll(sortByCreatedAtDesc);
+            List<Project> operacao = projectRepository.findAll(sortByCreatedAtDesc);
             log.createLog(new Log("Busca de projetos", new Date(), "Busca realizada"));
-            return (List<Project>) operacao;
+            return  operacao;
         } catch (Exception e) {
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            TransactionAspectSupport.currentTransactionStatus().flush();
             log.createLog(new Log("Erro na busca de projetos", new Date(), e.getMessage()));
-            return null;
+            throw e;
         }
 
     }
 
     
     @PostMapping("/projects")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Project createProject(@RequestBody Project project) {
+   // @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Project createProject(Project project) {
         try {
         	Project operacao = projectRepository.save(project);
             log.createLog(new Log("Inserção de projetos", new Date(), "Inserção realizada"));
@@ -85,62 +79,62 @@ public class ProjectController {
 
     }
 
-    @Transactional
+    //@Transactional
     @GetMapping(value = "/projects/{id}")
     public ResponseEntity<Project> getTodoById(@PathVariable("id") Long id) {
 
         try {
-            operacao = projectRepository.findById(id)
+        	 ResponseEntity<Project> operacao = projectRepository.findById(id)
                     .map(project -> ResponseEntity.ok().body(project))
                     .orElse(ResponseEntity.notFound().build());
             log.createLog(new Log("Buscando pelo projeto " + id, new Date(), "Busca realizada com sucesso"));
-            return (ResponseEntity<Project>) operacao;
+            return operacao;
         } catch (Exception e) {
              log.createLog(new Log("Erro ao buscar pelo projeto " + id, new Date(), e.getMessage()));
-             return null;
+             throw e;
         }
     }
 
-    @Transactional
+    //@Transactional
     @PutMapping(value = "/projects/{id}")
     public ResponseEntity<Project> updateTodo(@PathVariable("id") Long id,
             Project project) {
         try {
-            operacao = projectRepository.findById(id)
+        	 ResponseEntity<Project> operacao = projectRepository.findById(id)
                 .map(projectData -> {
                     projectData.setName(project.getName());
                     Project updatedProject = projectRepository.save(projectData);
                     return  ResponseEntity.ok().body(updatedProject);
                 }).orElse(ResponseEntity.notFound().build());
              log.createLog(new Log("Atualizando projeto " + id, new Date(), "Atualização realizada com sucesso"));
-             return (ResponseEntity<Project>) operacao;
+             return operacao;
             
         } catch (Exception e) {
             log.createLog(new Log("Erro ao atualizar projeto " + id, new Date(), e.getMessage()));
+            throw e;
         }
-        
-        return null;
+
         
     }
 
-    @Transactional
+    //@Transactional
     @DeleteMapping(value = "/projects/{id}")
     public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
         
         try {
-            projectRepository.findById(id)
+        	 ResponseEntity<?> operacao = projectRepository.findById(id)
                 .map(project -> {
                     projectRepository.deleteById(id);
-                    operacao = ResponseEntity.ok().build();
-                    log.createLog(new Log("Deletando projeto " + id, new Date(), "Projeto deletado com sucesso"));
-                    return operacao;
+                   return ResponseEntity.ok().build();
+                    
                 }).orElse(ResponseEntity.notFound().build());
+            log.createLog(new Log("Deletando projeto " + id, new Date(), "Projeto deletado com sucesso"));
+            return  operacao;
             
         } catch (Exception e) {
             log.createLog(new Log("Erro ao deletar projeto " + id, new Date(), e.getMessage()));
+            throw e;
         }
-        
-        return null;
          
     }
 
