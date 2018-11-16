@@ -1,12 +1,12 @@
-package com.example.polls;
+package com.example.websocketdemo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PollsApplication {
+public class WebsocketDemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PollsApplication.class, args);
+		SpringApplication.run(WebsocketDemoApplication.class, args);
 	}
 }
